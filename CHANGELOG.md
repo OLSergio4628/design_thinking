@@ -7,5 +7,9 @@
 ## V1.0.1 2026-10-18 21:50
 - Carga de librerías, lectura del dataset y métricas iniciales
 
-## V1.0.1 2026-10-18 22:10
+## V1.0.2 2026-10-18 22:10
 - Funciones de limpieza y normalización
+
+## V1.0.3 2026-10-18 22:47
+- Aplicación de limpieza y normalización al DataFrame
+- Conversión de fechas, unidades, montos y categorías a formatos homogéneos
