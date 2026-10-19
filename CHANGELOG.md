@@ -25,3 +25,6 @@
 ## V1.0.6 2026-10-18 23:02
 - Exportación del dataset limpio a CSV
 - Generación del reporte Markdown con estado inicial, transformaciones y métricas
+
+## V1.0.7 2026-10-18 23:36
+- Presentación del reporte Markdown con estado inicial, transformaciones y métricas
