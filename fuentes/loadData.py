@@ -374,11 +374,137 @@ def calcular_metricas_calidad(original, procesado, metricas_duplicados):
     }
 
 
+def generar_reporte_markdown(metricas):
+    nulos_antes = metricas["valores_nulos"]["antes"]
+    nulos_despues = metricas["valores_nulos"]["despues"]
+    mejora_nulos = nulos_antes["porcentaje"] - nulos_despues["porcentaje"]
+
+    lineas = [
+        "# Reporte de calidad de datos",
+        "",
+        f"Fecha de generación: {datetime.now():%Y-%m-%d %H:%M:%S}",
+        "",
+        "## Estado inicial",
+        "",
+        f"- Archivo de entrada: `{RUTA_ARCHIVO.name}`",
+        f"- Registros: {metricas['registros_antes']:,}",
+        f"- Columnas: {len(df_original.columns)}",
+        (
+            f"- Valores nulos: {nulos_antes['cantidad']:,} "
+            f"({nulos_antes['porcentaje']:.2f}% de las celdas)"
+        ),
+        "- Formatos mixtos en fechas: "
+        + ", ".join(
+            f"{nombre} ({datos['representaciones_distintas_antes']})"
+            for nombre, datos in metricas["consistencia_formatos"].items()
+            if nombre in ("date_of_birth", "signup_date", "last_login")
+        ),
+        "",
+        "## Transformaciones aplicadas",
+        "",
+        "- Normalización de nombres, ciudades y estados: minúsculas, sin acentos ni caracteres especiales.",
+        "- Limpieza de espacios y conversión de emails a minúsculas.",
+        "- Homogeneización de países, estados de cliente, planes, idiomas y consentimiento de marketing.",
+        "- Conversión de estaturas a centímetros y pesos a kilogramos.",
+        "- Conversión de fechas a valores datetime y montos a números decimales, sin conversión cambiaria.",
+        (
+            "- Deduplicación por nombre normalizado y fecha de nacimiento; "
+            "se conservó el registro más completo y, en empate, el de actividad más reciente."
+        ),
+        "",
+        "## Resultados y mejora de calidad",
+        "",
+        "| Métrica | Inicial | Final | Cambio |",
+        "|---|---:|---:|---:|",
+        (
+            f"| Registros | {metricas['registros_antes']:,} | "
+            f"{metricas['registros_despues']:,} | "
+            f"-{metricas['duplicados_eliminados']:,} duplicados |"
+        ),
+        (
+            f"| Valores nulos | {nulos_antes['cantidad']:,} "
+            f"({nulos_antes['porcentaje']:.2f}%) | "
+            f"{nulos_despues['cantidad']:,} "
+            f"({nulos_despues['porcentaje']:.2f}%) | "
+            f"{mejora_nulos:.2f} puntos porcentuales |"
+        ),
+        (
+            f"| Grupos duplicados | — | {metricas['grupos_duplicados']:,} | "
+            f"{metricas['duplicados_eliminados']:,} filas eliminadas |"
+        ),
+        "",
+        "### Consistencia de formatos",
+        "",
+        "| Columna | Estado inicial | Estado final |",
+        "|---|---|---|",
+    ]
+
+    formatos = metricas["consistencia_formatos"]
+    for columna in ("date_of_birth", "signup_date", "last_login"):
+        datos = formatos[columna]
+        lineas.append(
+            f"| `{columna}` | {datos['representaciones_distintas_antes']} "
+            f"representaciones | {datos['tipo_final']} |"
+        )
+    for columna in ("customer_status", "plan", "preferred_language"):
+        datos = formatos[columna]
+        lineas.append(
+            f"| `{columna}` | {datos['representaciones_distintas_antes']} "
+            f"variantes | {datos['valores_estandarizados_finales']} valores estandarizados |"
+        )
+    for columna in ("height", "weight"):
+        datos = formatos[columna]
+        lineas.append(
+            f"| `{columna}` | {datos['unidades_distintas_antes']} unidades | "
+            f"Una unidad: {datos['unidad_final']} |"
+        )
+    datos_monto = formatos["amount_spent"]
+    lineas.append(
+        f"| `amount_spent` | {datos_monto['representaciones_distintas_antes']} "
+        f"representaciones | {datos_monto['tipo_final']} |"
+    )
+
+    lineas.extend(
+        [
+            "",
+            "### Valores nulos por columna",
+            "",
+            "| Columna | Inicial (cantidad, %) | Final (cantidad, %) |",
+            "|---|---:|---:|",
+        ]
+    )
+    for columna in df_original.columns:
+        antes = nulos_antes["por_columna"][columna]
+        despues = nulos_despues["por_columna"][columna]
+        lineas.append(
+            f"| `{columna}` | {antes['cantidad']:,} "
+            f"({antes['porcentaje']:.2f}%) | {despues['cantidad']:,} "
+            f"({despues['porcentaje']:.2f}%) |"
+        )
+
+    lineas.extend(
+        [
+            "",
+            "## Archivos generados",
+            "",
+            f"- Dataset limpio: `{RUTA_SALIDA_DATASET.relative_to(RUTA_RAIZ).as_posix()}`",
+            f"- Reporte: `{RUTA_SALIDA_REPORTE.relative_to(RUTA_RAIZ).as_posix()}`",
+            "",
+        ]
+    )
+    return "\n".join(lineas)
+
+
 RUTA_ARCHIVO = (
     Path(__file__).resolve().parent.parent
     / "datos"
     / "ia_project_dirty_dataset_6000.csv"
 )
+RUTA_RAIZ = Path(__file__).resolve().parent.parent
+RUTA_SALIDA_DATASET = (
+    RUTA_RAIZ / "datos" / "ia_project_golden_clean.csv"
+)
+RUTA_SALIDA_REPORTE = RUTA_RAIZ / "ia_project_quality_report.md"
 
 df_original = pd.read_csv(RUTA_ARCHIVO)
 df = limpiar_dataframe(df_original)
@@ -416,3 +542,16 @@ reporte_markdown = {
         }
     ],
 }
+
+df.to_csv(
+    RUTA_SALIDA_DATASET,
+    index=False,
+    date_format="%Y-%m-%d %H:%M:%S",
+    encoding="utf-8",
+)
+RUTA_SALIDA_REPORTE.write_text(
+    generar_reporte_markdown(metricas_calidad),
+    encoding="utf-8",
+)
+print(f"\nDataset limpio guardado en: {RUTA_SALIDA_DATASET}")
+print(f"Reporte guardado en: {RUTA_SALIDA_REPORTE}")

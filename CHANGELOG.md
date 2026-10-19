@@ -21,3 +21,7 @@
 ## V1.0.5 2026-10-18 22:57
 - Cálculo de registros, valores nulos y duplicados antes y después del proceso
 - Medición de la estandarización de fechas, categorías, unidades y montos
+
+## V1.0.6 2026-10-18 23:02
+- Exportación del dataset limpio a CSV
+- Generación del reporte Markdown con estado inicial, transformaciones y métricas
