@@ -4,386 +4,160 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="theme-color" content="#f6f8fc">
-	<title>Panorama de clientes</title>
+	<title>Detección de fraude · resumen</title>
 	<style>
 		:root {
-			color-scheme: light;
 			font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 			color: #17243b;
 			background: #f6f8fc;
 			font-synthesis: none;
 			text-rendering: optimizeLegibility;
 		}
-
 		* { box-sizing: border-box; }
-
-		body {
-			margin: 0;
-			min-width: 320px;
-			background:
-				radial-gradient(ellipse at 8% 0%, rgba(117, 145, 255, .12), transparent 35rem),
-				#f6f8fc;
-		}
-
-		main {
-			width: min(1120px, calc(100% - 40px));
-			margin: 0 auto;
-			padding: 56px 0 40px;
-		}
-
-		.eyebrow {
-			margin: 0 0 10px;
-			color: #5869ca;
-			font-size: .76rem;
-			font-weight: 750;
-			letter-spacing: .13em;
-			text-transform: uppercase;
-		}
-
-		header {
-			display: flex;
-			align-items: flex-end;
-			justify-content: space-between;
-			gap: 24px;
-			margin-bottom: 30px;
-		}
-
-		h1 {
-			margin: 0;
-			font-size: clamp(2rem, 4vw, 3.2rem);
-			letter-spacing: -.055em;
-			line-height: 1.05;
-		}
-
-		.subtitle {
-			max-width: 610px;
-			margin: 12px 0 0;
-			color: #66738a;
-			font-size: .98rem;
-			line-height: 1.6;
-		}
-
-		.upload {
-			display: inline-flex;
-			flex: 0 0 auto;
-			align-items: center;
-			gap: 9px;
-			padding: 12px 16px;
-			border: 1px solid #dce2ef;
-			border-radius: 12px;
-			background: #fff;
-			color: #263653;
-			font-size: .88rem;
-			font-weight: 700;
-			cursor: pointer;
-			box-shadow: 0 4px 14px rgba(31, 48, 87, .04);
-		}
-
-		.upload:hover { border-color: #aeb9ed; }
-		.upload:focus-within { outline: 3px solid rgba(91, 108, 214, .22); }
-		.upload input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-		.upload svg { width: 17px; height: 17px; }
-
-		.kpis {
-			display: grid;
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-			gap: 16px;
-			margin-bottom: 18px;
-		}
-
-		.kpi, .panel {
-			border: 1px solid #e7ebf3;
-			border-radius: 18px;
-			background: rgba(255, 255, 255, .9);
-			box-shadow: 0 8px 26px rgba(34, 52, 91, .035);
-		}
-
-		.kpi { padding: 20px 22px; }
+		body { margin: 0; min-width: 320px; background: radial-gradient(ellipse at 8% 0%, rgba(117, 145, 255, .12), transparent 35rem), #f6f8fc; }
+		main { width: min(1040px, calc(100% - 40px)); margin: 0 auto; padding: 54px 0 40px; }
+		.eyebrow { margin: 0 0 10px; color: #5869ca; font-size: .76rem; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+		h1 { margin: 0; font-size: clamp(2rem, 4vw, 3.15rem); letter-spacing: -.055em; line-height: 1.05; }
+		.subtitle { max-width: 660px; margin: 12px 0 28px; color: #66738a; font-size: .98rem; line-height: 1.6; }
+		.kpis, .charts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+		.kpi, .panel { min-width: 0; border: 1px solid #e7ebf3; border-radius: 18px; background: rgba(255, 255, 255, .92); box-shadow: 0 8px 26px rgba(34, 52, 91, .035); }
+		.kpi { padding: 19px 21px; }
 		.kpi-label { color: #77839a; font-size: .82rem; font-weight: 650; }
-		.kpi-value { display: block; margin-top: 7px; font-size: 1.95rem; font-weight: 760; letter-spacing: -.04em; }
+		.kpi-value { display: block; margin-top: 7px; font-size: 1.9rem; font-weight: 760; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
 		.kpi-note { margin-top: 4px; color: #8791a4; font-size: .78rem; }
-
-		.charts {
-			display: grid;
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-			gap: 16px;
-		}
-
-		.panel { min-width: 0; padding: 22px 24px 24px; }
+		.charts { margin-top: 16px; }
+		.panel { padding: 21px 22px 23px; }
 		.panel.wide { grid-column: 1 / -1; }
-		.panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 20px; }
-		h2 { margin: 0; font-size: 1.06rem; letter-spacing: -.02em; }
-		.panel-description { margin: 5px 0 0; color: #8993a5; font-size: .8rem; }
-		.badge { color: #78849a; font-size: .75rem; white-space: nowrap; }
-
-		.bars { display: grid; gap: 16px; }
+		.panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+		h2 { margin: 0; font-size: 1.04rem; letter-spacing: -.02em; }
+		.description { margin: 5px 0 0; color: #8993a5; font-size: .8rem; line-height: 1.45; }
+		.badge { color: #78849a; font-size: .74rem; white-space: nowrap; }
+		.bars { display: grid; gap: 17px; }
 		.bar-row { display: grid; gap: 7px; }
-		.bar-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-size: .85rem; }
-		.bar-label { overflow-wrap: anywhere; color: #46536a; }
-		.bar-value { flex: 0 0 auto; color: #273650; font-weight: 720; font-variant-numeric: tabular-nums; }
-		.track { height: 9px; overflow: hidden; border-radius: 99px; background: #edf0f7; }
-		.fill { height: 100%; min-width: 2px; border-radius: inherit; background: linear-gradient(90deg, #6675e6, #8c8cf2); }
-		.bar-row:nth-child(3n + 2) .fill { background: linear-gradient(90deg, #20a58e, #63c9b2); }
-		.bar-row:nth-child(3n) .fill { background: linear-gradient(90deg, #ee9b53, #f5c277); }
-
-		.year-chart { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); align-items: end; gap: 12px; min-height: 188px; padding-top: 4px; }
-		.year-column { display: grid; grid-template-rows: 18px 1fr 20px; align-items: end; gap: 7px; height: 100%; text-align: center; }
-		.year-count { color: #718097; font-size: .72rem; font-variant-numeric: tabular-nums; }
-		.year-track { display: flex; height: 128px; align-items: flex-end; overflow: hidden; border-radius: 8px 8px 3px 3px; background: #f0f2fa; }
-		.year-fill { width: 100%; min-height: 2px; border-radius: 7px 7px 2px 2px; background: linear-gradient(180deg, #8987ef, #6475df); }
-		.year-label { color: #748097; font-size: .76rem; }
-
-		.insights {
-			display: grid;
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-			gap: 12px;
-			margin-top: 16px;
-		}
-
-		.insight { padding: 14px 16px; border-radius: 12px; background: #f7f8fd; color: #64718a; font-size: .83rem; line-height: 1.5; }
+		.bar-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-size: .83rem; }
+		.bar-label { color: #46536a; }
+		.bar-value { color: #273650; font-weight: 720; font-variant-numeric: tabular-nums; }
+		.track { height: 10px; overflow: hidden; border-radius: 99px; background: #edf0f7; }
+		.fill { height: 100%; min-width: 2px; border-radius: inherit; background: linear-gradient(90deg, #6475df, #8c8cf2); }
+		.fill.fraud { background: linear-gradient(90deg, #df596d, #f3997c); }
+		.hour-chart { display: grid; grid-template-columns: repeat(auto-fit, minmax(54px, 1fr)); align-items: end; gap: 8px; min-height: 190px; }
+		.hour-column { display: grid; grid-template-rows: 18px 1fr 20px; align-items: end; gap: 7px; height: 100%; text-align: center; }
+		.hour-count { color: #718097; font-size: .69rem; font-variant-numeric: tabular-nums; }
+		.hour-track { display: flex; height: 128px; align-items: flex-end; overflow: hidden; border-radius: 7px 7px 3px 3px; background: #f0f2fa; }
+		.hour-fill { width: 100%; min-height: 2px; border-radius: 6px 6px 2px 2px; background: linear-gradient(180deg, #f3997c, #db5e70); }
+		.hour-label { color: #748097; font-size: .7rem; }
+		.insight { padding: 15px 17px; border-radius: 12px; background: #f7f8fd; color: #64718a; font-size: .86rem; line-height: 1.55; }
 		.insight strong { color: #273650; }
-		.notice { min-height: 20px; margin: 16px 2px 0; color: #6d7a91; font-size: .8rem; }
+		.notice { min-height: 22px; margin: 17px 2px 0; color: #6d7a91; font-size: .82rem; }
 		.notice.error { color: #b33e46; }
-		footer { margin-top: 18px; color: #8a94a6; font-size: .76rem; line-height: 1.55; }
-
+		footer { margin-top: 16px; color: #8a94a6; font-size: .76rem; line-height: 1.55; }
 		@media (max-width: 760px) {
 			main { width: min(100% - 28px, 600px); padding-top: 34px; }
-			header { align-items: flex-start; flex-direction: column; }
-			.kpis { gap: 10px; }
-			.kpi { padding: 16px; }
-			.kpi-value { font-size: 1.55rem; }
-			.charts { grid-template-columns: 1fr; }
+			.kpis, .charts { grid-template-columns: 1fr; gap: 10px; }
 			.panel.wide { grid-column: auto; }
-			.insights { grid-template-columns: 1fr; }
 		}
-
 		@media (max-width: 420px) {
-			.kpis { grid-template-columns: 1fr; }
-			.kpi { padding: 13px 16px; }
-			.kpi-value { margin-top: 2px; }
-			.panel { padding: 19px 16px; }
-			.year-chart { gap: 6px; }
+			.kpi { padding: 15px 17px; }
+			.kpi-value { margin-top: 3px; }
+			.panel { padding: 18px 16px; }
+			.hour-chart { gap: 5px; }
 		}
 	</style>
 </head>
 <body>
 	<main>
-		<header>
-			<div>
-				<p class="eyebrow">Análisis exploratorio · clientes</p>
-				<h1>Panorama de clientes</h1>
-				<p class="subtitle">Una vista rápida de la composición de la base y la evolución de las altas, a partir del conjunto de datos limpio.</p>
-			</div>
-			<label class="upload">
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"/></svg>
-				Cargar otro CSV
-				<input id="csv-file" type="file" accept=".csv,text/csv" aria-label="Cargar otro archivo CSV">
-			</label>
-		</header>
+		<p class="eyebrow">Análisis exploratorio · clasificación binaria</p>
+		<h1>Detección de fraude</h1>
+		<p class="subtitle">Explora la distribución de transacciones legítimas y fraudulentas en Credit Card Fraud Detection. La proporción de fraude es pequeña, por lo que el desbalance de clases importa al evaluar cualquier modelo.</p>
 
 		<section class="kpis" aria-label="Indicadores principales">
-			<article class="kpi">
-				<span class="kpi-label">Registros analizados</span>
-				<strong class="kpi-value" id="total-kpi">5,485</strong>
-				<div class="kpi-note">Después de la deduplicación</div>
-			</article>
-			<article class="kpi">
-				<span class="kpi-label">Países representados</span>
-				<strong class="kpi-value" id="countries-kpi">6</strong>
-				<div class="kpi-note">Países distintos en la base</div>
-			</article>
-			<article class="kpi">
-				<span class="kpi-label">Clientes activos</span>
-				<strong class="kpi-value" id="active-kpi">38.4%</strong>
-				<div class="kpi-note">Proporción del total de registros</div>
-			</article>
+			<article class="kpi"><span class="kpi-label">Transacciones</span><strong class="kpi-value" id="total">—</strong><div class="kpi-note">Registros validados</div></article>
+			<article class="kpi"><span class="kpi-label">Fraudes</span><strong class="kpi-value" id="frauds">—</strong><div class="kpi-note" id="fraud-share">Clase positiva</div></article>
+			<article class="kpi"><span class="kpi-label">Variables</span><strong class="kpi-value" id="features">—</strong><div class="kpi-note">Time, V1–V28, Amount y Class</div></article>
 		</section>
 
-		<section class="charts" aria-label="Visualizaciones de datos">
+		<section class="charts" aria-label="Visualizaciones del conjunto">
 			<article class="panel">
-				<div class="panel-heading">
-					<div><h2>Clientes por país</h2><p class="panel-description">Distribución geográfica de los registros</p></div>
-					<span class="badge">Registros</span>
-				</div>
-				<div class="bars" id="country-chart" aria-label="Gráfico de clientes por país"></div>
+				<div class="panel-heading"><div><h2>Desbalance de clases</h2><p class="description">Conteo proporcional a todas las transacciones</p></div><span class="badge">Filas</span></div>
+				<div class="bars" id="class-chart"></div>
 			</article>
 			<article class="panel">
-				<div class="panel-heading">
-					<div><h2>Clientes por plan</h2><p class="panel-description">Composición de los planes contratados</p></div>
-					<span class="badge">Registros</span>
-				</div>
-				<div class="bars" id="plan-chart" aria-label="Gráfico de clientes por plan"></div>
-			</article>
-			<article class="panel">
-				<div class="panel-heading">
-					<div><h2>Estado del cliente</h2><p class="panel-description">Distribución por situación de cuenta</p></div>
-					<span class="badge">Registros</span>
-				</div>
-				<div class="bars" id="status-chart" aria-label="Gráfico de estado del cliente"></div>
-			</article>
-			<article class="panel">
-				<div class="panel-heading">
-					<div><h2>Altas por año</h2><p class="panel-description">Cantidad de registros según año de alta</p></div>
-					<span class="badge">Registros</span>
-				</div>
-				<div class="year-chart" id="year-chart" aria-label="Gráfico de altas por año"></div>
+				<div class="panel-heading"><div><h2>Monto mediano</h2><p class="description">Amount por tipo de transacción</p></div><span class="badge">Valor original</span></div>
+				<div class="bars" id="amount-chart"></div>
 			</article>
 			<article class="panel wide">
-				<div class="panel-heading">
-					<div><h2>Lecturas rápidas</h2><p class="panel-description">Principales patrones que destacan en los datos</p></div>
-				</div>
-				<div class="insights" id="insights"></div>
+				<div class="panel-heading"><div><h2>Fraudes a lo largo del tiempo</h2><p class="description">Conteo en bloques relativos de ocho horas desde el inicio del registro; no representa hora del día ni zona horaria.</p></div><span class="badge">Clase 1</span></div>
+				<div class="hour-chart" id="time-chart"></div>
 			</article>
+			<article class="panel wide"><div class="panel-heading"><div><h2>Lectura rápida</h2><p class="description">Interpretación de las métricas cargadas</p></div></div><div class="insight" id="insight">Cargando resumen generado por el proceso de preparación…</div></article>
 		</section>
 
-		<p class="notice" id="notice" role="status" aria-live="polite">Fuente: ia_project_golden_clean.csv · Visualización basada en conteos y proporciones.</p>
-		<footer>Los datos de este proyecto son sintéticos. No se muestran montos de gasto: la documentación indica que las monedas no están convertidas a una divisa común.</footer>
+		<p class="notice" id="notice" role="status" aria-live="polite">Cargando datos resumidos del dataset…</p>
+		<footer>Fuente: <a href="https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud">mlg-ulb/creditcardfraud en Kaggle</a>. Se conservan las transacciones y no se comparan sumas monetarias.</footer>
 	</main>
-
 	<script>
-		const initialData = {
-			total: 5485,
-			countries: { "Argentina": 965, "Brasil": 915, "Canadá": 859, "España": 926, "Estados Unidos": 917, "México": 903 },
-			plans: { "Básico": 1840, "Empresarial": 1801, "Pro": 1844 },
-			statuses: { "Activo": 2106, "Inactivo": 1320, "Prueba": 2059 },
-			years: { "2020": 459, "2021": 1002, "2022": 1025, "2023": 969, "2024": 1001, "2025": 998, "2026": 31 }
-		};
-		const numberFormat = new Intl.NumberFormat("es-MX");
-		const percentFormat = new Intl.NumberFormat("es-MX", { style: "percent", maximumFractionDigits: 1 });
+		const format = new Intl.NumberFormat("es-MX");
+		const percent = new Intl.NumberFormat("es-MX", { style: "percent", maximumFractionDigits: 4 });
+		const money = new Intl.NumberFormat("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-		function percent(value, total) {
-			return total ? percentFormat.format(value / total) : percentFormat.format(0);
-		}
-
-		function renderBars(elementId, values, total) {
-			const entries = Object.entries(values).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "es"));
-			const maximum = Math.max(...entries.map((entry) => entry[1]), 1);
-			document.getElementById(elementId).innerHTML = entries.map(([label, value]) => `
+		function renderBars(element, entries, maximum, formatter, isFraudClass = false) {
+			element.innerHTML = entries.map(([label, value]) => `
 				<div class="bar-row">
-					<div class="bar-meta"><span class="bar-label">${escapeHtml(label)}</span><span class="bar-value">${numberFormat.format(value)} <span class="badge">· ${percent(value, total)}</span></span></div>
-					<div class="track" role="img" aria-label="${escapeHtml(label)}: ${numberFormat.format(value)} registros, ${percent(value, total)}"><div class="fill" style="width:${(value / maximum) * 100}%"></div></div>
+					<div class="bar-meta"><span class="bar-label">${label}</span><span class="bar-value">${formatter(value)}</span></div>
+					<div class="track" role="img" aria-label="${label}: ${formatter(value)}"><div class="fill${isFraudClass && label.startsWith("Fraude") ? " fraud" : ""}" style="width:${Math.max(value / maximum * 100, value > 0 ? .4 : 0)}%"></div></div>
 				</div>`).join("");
 		}
 
-		function renderYears(values) {
-			const entries = Object.entries(values).sort(([a], [b]) => a.localeCompare(b));
-			const maximum = Math.max(...entries.map((entry) => entry[1]), 1);
-			document.getElementById("year-chart").innerHTML = entries.map(([year, count]) => `
-				<div class="year-column" role="img" aria-label="${year}: ${numberFormat.format(count)} altas">
-					<span class="year-count">${numberFormat.format(count)}</span>
-					<div class="year-track"><div class="year-fill" style="height:${(count / maximum) * 100}%"></div></div>
-					<span class="year-label">${escapeHtml(year)}</span>
+		function renderTime(buckets) {
+			const maximum = Math.max(...buckets.map((bucket) => bucket.conteo), 1);
+			document.getElementById("time-chart").innerHTML = buckets.map((bucket) => `
+				<div class="hour-column" role="img" aria-label="${bucket.intervalo}: ${format.format(bucket.conteo)} fraudes">
+					<span class="hour-count">${format.format(bucket.conteo)}</span>
+					<div class="hour-track"><div class="hour-fill" style="height:${bucket.conteo / maximum * 100}%"></div></div>
+					<span class="hour-label">${bucket.intervalo}</span>
 				</div>`).join("");
 		}
 
-		function render(data) {
-			document.getElementById("total-kpi").textContent = numberFormat.format(data.total);
-			document.getElementById("countries-kpi").textContent = numberFormat.format(Object.keys(data.countries).length);
-			document.getElementById("active-kpi").textContent = percent(data.statuses["Activo"] || 0, data.total);
-			renderBars("country-chart", data.countries, data.total);
-			renderBars("plan-chart", data.plans, data.total);
-			renderBars("status-chart", data.statuses, data.total);
-			renderYears(data.years);
-
-			const [topCountry, topCountryCount] = Object.entries(data.countries).sort((a, b) => b[1] - a[1])[0] || ["—", 0];
-			const [topPlan, topPlanCount] = Object.entries(data.plans).sort((a, b) => b[1] - a[1])[0] || ["—", 0];
-			const activeShare = percent(data.statuses["Activo"] || 0, data.total);
-			document.getElementById("insights").innerHTML = `
-				<div class="insight"><strong>${escapeHtml(topCountry)}</strong> concentra más registros (${numberFormat.format(topCountryCount)}, ${percent(topCountryCount, data.total)}).</div>
-				<div class="insight">El plan más frecuente es <strong>${escapeHtml(topPlan)}</strong> (${numberFormat.format(topPlanCount)}, ${percent(topPlanCount, data.total)}).</div>
-				<div class="insight"><strong>${activeShare}</strong> de los registros corresponden a clientes activos.</div>`;
-		}
-
-		function escapeHtml(value) {
-			return String(value).replace(/[&<>"']/g, (character) => ({
-				"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-			})[character]);
-		}
-
-		function parseCsv(text) {
-			const rows = [];
-			let row = [];
-			let field = "";
-			let quoted = false;
-			for (let index = 0; index < text.length; index += 1) {
-				const character = text[index];
-				if (quoted) {
-					if (character === '"' && text[index + 1] === '"') {
-						field += '"';
-						index += 1;
-					} else if (character === '"') {
-						quoted = false;
-					} else {
-						field += character;
-					}
-				} else if (character === '"' && field.length === 0) {
-					quoted = true;
-				} else if (character === ",") {
-					row.push(field);
-					field = "";
-				} else if (character === "\n" || character === "\r") {
-					if (character === "\r" && text[index + 1] === "\n") index += 1;
-					row.push(field);
-					if (row.some((value) => value.trim() !== "")) rows.push(row);
-					row = [];
-					field = "";
-				} else {
-					field += character;
-				}
-			}
-			if (quoted) throw new Error("El CSV contiene un campo entre comillas sin cerrar.");
-			row.push(field);
-			if (row.some((value) => value.trim() !== "")) rows.push(row);
-			if (rows.length < 2) throw new Error("El CSV no contiene filas de datos.");
-
-			const headers = rows[0].map((header) => header.replace(/^\uFEFF/, "").trim());
-			const required = ["country", "plan", "customer_status", "signup_date"];
-			const missing = required.filter((column) => !headers.includes(column));
-			if (missing.length) throw new Error(`Faltan columnas requeridas: ${missing.join(", ")}.`);
-
-			const indexByName = Object.fromEntries(headers.map((header, index) => [header, index]));
-			const result = { total: 0, countries: {}, plans: {}, statuses: {}, years: {} };
-			for (const fields of rows.slice(1)) {
-				if (fields.length !== headers.length) continue;
-				result.total += 1;
-				addCount(result.countries, fields[indexByName.country]);
-				addCount(result.plans, fields[indexByName.plan]);
-				addCount(result.statuses, fields[indexByName.customer_status]);
-				const date = fields[indexByName.signup_date].trim();
-				const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(date);
-				if (match) {
-					const [, year, month, day] = match;
-					const parsed = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
-					if (parsed.getUTCFullYear() === Number(year) && parsed.getUTCMonth() === Number(month) - 1 && parsed.getUTCDate() === Number(day)) {
-						addCount(result.years, year);
-					}
-				}
-			}
-			if (!result.total) throw new Error("No se encontraron filas con la estructura esperada.");
-			return result;
-		}
-
-		function addCount(counts, value) {
-			const label = value.trim() || "Sin dato";
-			counts[label] = (counts[label] || 0) + 1;
-		}
-
-		const notice = document.getElementById("notice");
-		document.getElementById("csv-file").addEventListener("change", async (event) => {
-			const [file] = event.target.files;
-			if (!file) return;
+		async function loadSummary() {
+			const notice = document.getElementById("notice");
 			try {
-				const data = parseCsv(await file.text());
-				render(data);
+				const response = await fetch("./creditcard_summary.json", { cache: "no-store" });
+				if (!response.ok) throw new Error(`HTTP ${response.status}`);
+				const summary = await response.json();
+				const legitimate = summary.clases["0"];
+				const fraud = summary.clases["1"];
+				const total = summary.registros;
+				document.getElementById("total").textContent = format.format(total);
+				document.getElementById("frauds").textContent = format.format(fraud);
+				document.getElementById("fraud-share").textContent = `${percent.format(fraud / total)} del total`;
+				document.getElementById("features").textContent = format.format(summary.columnas);
+				renderBars(
+					document.getElementById("class-chart"),
+					[["Legítimas · clase 0", legitimate], ["Fraude · clase 1", fraud]],
+					total,
+					(value) => `${format.format(value)} · ${percent.format(value / total)}`,
+					true
+				);
+				const medians = summary.mediana_amount_por_clase;
+				const maxMedian = Math.max(medians["0"], medians["1"], 1);
+				renderBars(
+					document.getElementById("amount-chart"),
+					[["Legítimas · clase 0", medians["0"]], ["Fraude · clase 1", medians["1"]]],
+					maxMedian,
+					(value) => money.format(value)
+				);
+				renderTime(summary.fraudes_por_bloque_8h_relativo);
+				const ratio = fraud ? Math.round(legitimate / fraud) : 0;
+				document.getElementById("insight").innerHTML = `Solo <strong>${percent.format(fraud / total)}</strong> de los registros son fraude: aproximadamente <strong>1 de cada ${format.format(Math.round(total / fraud))}</strong>. La clase mayoritaria supera a la positiva en una proporción cercana a <strong>${format.format(ratio)}:1</strong>; la exactitud por sí sola puede ocultar un modelo que no detecta fraudes.`;
 				notice.className = "notice";
-				notice.textContent = `Visualización actualizada con ${file.name} · ${numberFormat.format(data.total)} registros analizados.`;
+				notice.textContent = `${format.format(summary.filas_duplicadas_exactas)} filas exactamente duplicadas detectadas y conservadas; ${format.format(summary.nulos)} valores nulos.`;
 			} catch (error) {
 				notice.className = "notice error";
-				notice.textContent = `No se pudo cargar el CSV: ${error.message}`;
+				notice.textContent = "No se pudo cargar creditcard_summary.json. Ejecuta primero python fuentes\\loadData.py y abre este panel mediante python -m http.server 8000 desde la raíz del proyecto.";
 			}
-		});
+		}
 
-		render(initialData);
+		loadSummary();
 	</script>
 </body>
 </html>

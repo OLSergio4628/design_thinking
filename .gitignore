@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Kaggle credentials and downloaded/generated credit-card dataset
+/config/kaggle.json
+/datos/creditcard.csv
+/datos/creditcard_clean.csv
+/datos/creditcard_summary.json

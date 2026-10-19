@@ -1,4 +1,10 @@
 # Changelo
+## V1.1.0 2026-10-18
+- Sustitución de la fuente de datos por `mlg-ulb/creditcardfraud` de Kaggle
+- Descarga autenticada desde `config/kaggle.json`, validación y preparación del CSV
+- Reporte y visualización adaptados a la detección de fraude y al desbalance de clases
+- Exclusión de credenciales y datos descargados del control de versiones
+
 ## V1.0.0 2026-10-18 21:30
 - Inicialización de scaffolding
 - Carga inicial de datos
@@ -28,3 +34,6 @@
 
 ## V1.0.7 2026-10-18 23:36
 - Presentación del reporte Markdown con estado inicial, transformaciones y métricas
+
+## V2.0.0 2026-10-18 23:49
+- Actualización a version 2.0.0 caso de uso 2
