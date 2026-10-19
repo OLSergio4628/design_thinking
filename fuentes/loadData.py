@@ -229,6 +229,45 @@ def limpiar_dataframe(dataframe):
     return dataframe
 
 
+def eliminar_duplicados(dataframe):
+    dataframe = dataframe.copy()
+    claves = ["full_name", "date_of_birth"]
+    clave_valida = dataframe[claves].notna().all(axis=1)
+    registros_identificados = int(
+        dataframe.loc[clave_valida].duplicated(claves, keep=False).sum()
+    )
+    grupos_duplicados = int(
+        (
+            dataframe.loc[clave_valida]
+            .groupby(claves, dropna=False)
+            .size()
+            .gt(1)
+        ).sum()
+    )
+    filas_antes = len(dataframe)
+    dataframe["_completitud"] = dataframe.notna().sum(axis=1)
+    dataframe["_orden_original"] = np.arange(filas_antes)
+    con_clave = dataframe.loc[clave_valida].sort_values(
+        ["_completitud", "last_login", "signup_date", "_orden_original"],
+        ascending=[False, False, False, True],
+        kind="mergesort",
+        na_position="last",
+    )
+    sin_clave = dataframe.loc[~clave_valida]
+    dataframe = pd.concat(
+        [con_clave.drop_duplicates(claves, keep="first"), sin_clave]
+    ).sort_values("_orden_original", kind="mergesort")
+    eliminados = filas_antes - len(dataframe)
+    dataframe = dataframe.drop(columns=["_completitud", "_orden_original"])
+    metricas = {
+        "registros_en_grupos_duplicados": registros_identificados,
+        "grupos_duplicados": int(grupos_duplicados),
+        "duplicados_eliminados": int(eliminados),
+        "registros_finales": int(len(dataframe)),
+    }
+    return dataframe, metricas
+
+
 RUTA_ARCHIVO = (
     Path(__file__).resolve().parent.parent
     / "datos"
@@ -237,14 +276,25 @@ RUTA_ARCHIVO = (
 
 df = pd.read_csv(RUTA_ARCHIVO)
 df = limpiar_dataframe(df)
+metricas_calidad = {}
+df, metricas_duplicados = eliminar_duplicados(df)
+metricas_calidad.update(metricas_duplicados)
 
 print(f"Total de registros: {len(df)}")
+print(f"Registros en grupos duplicados: {metricas_calidad['registros_en_grupos_duplicados']}")
+print(f"Grupos duplicados identificados: {metricas_calidad['grupos_duplicados']}")
+print(f"Registros duplicados eliminados: {metricas_calidad['duplicados_eliminados']}")
 print("\nVista preliminar:")
 print(df.head())
 
-metricas_calidad = {}
 reporte_markdown = {
     "titulo": "Reporte de calidad de datos",
     "fecha_generacion": datetime.now(),
-    "secciones": [],
+    "secciones": [
+        {
+            "titulo": "Deduplicación",
+            "criterio": "Nombre normalizado y fecha de nacimiento",
+            **metricas_duplicados,
+        }
+    ],
 }

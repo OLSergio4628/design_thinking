@@ -13,3 +13,7 @@
 ## V1.0.3 2026-10-18 22:47
 - Aplicación de limpieza y normalización al DataFrame
 - Conversión de fechas, unidades, montos y categorías a formatos homogéneos
+
+## V1.0.4 2026-10-18 22:51
+- Identificación y eliminación de registros duplicados
+- Registro de métricas de deduplicación para el reporte
