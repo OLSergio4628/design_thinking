@@ -17,3 +17,7 @@
 ## V1.0.4 2026-10-18 22:51
 - Identificación y eliminación de registros duplicados
 - Registro de métricas de deduplicación para el reporte
+
+## V1.0.5 2026-10-18 22:57
+- Cálculo de registros, valores nulos y duplicados antes y después del proceso
+- Medición de la estandarización de fechas, categorías, unidades y montos

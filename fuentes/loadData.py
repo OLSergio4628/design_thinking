@@ -268,22 +268,138 @@ def eliminar_duplicados(dataframe):
     return dataframe, metricas
 
 
+def _resumen_nulos(dataframe):
+    nulos_por_columna = dataframe.isna().sum()
+    total_celdas = dataframe.size
+    total_nulos = int(nulos_por_columna.sum())
+    return {
+        "cantidad": total_nulos,
+        "porcentaje": (
+            total_nulos / total_celdas * 100 if total_celdas else 0.0
+        ),
+        "por_columna": {
+            columna: {
+                "cantidad": int(nulos_por_columna[columna]),
+                "porcentaje": (
+                    float(nulos_por_columna[columna] / len(dataframe) * 100)
+                    if len(dataframe)
+                    else 0.0
+                ),
+            }
+            for columna in dataframe.columns
+        },
+    }
+
+
+def _firma_formato(valor):
+    texto = str(valor)
+    texto = re.sub(r"\d", "9", texto)
+    texto = re.sub(r"[A-Za-z]+", "A", texto)
+    return texto
+
+
+def _metricas_consistencia_formatos(original, procesado):
+    consistencia = {}
+    columnas_fecha = ("date_of_birth", "signup_date", "last_login")
+    columnas_categoria = (
+        "country",
+        "customer_status",
+        "plan",
+        "preferred_language",
+        "marketing_consent",
+    )
+
+    for columna in columnas_fecha:
+        variantes = int(
+            original[columna].dropna().map(_firma_formato).nunique()
+        )
+        serie_final = procesado[columna]
+        consistencia[columna] = {
+            "representaciones_distintas_antes": variantes,
+            "formatos_finales": 1 if serie_final.notna().any() else 0,
+            "tipo_final": str(serie_final.dtype),
+        }
+
+    for columna in columnas_categoria:
+        consistencia[columna] = {
+            "representaciones_distintas_antes": int(
+                original[columna].nunique(dropna=True)
+            ),
+            "valores_estandarizados_finales": int(
+                procesado[columna].nunique(dropna=True)
+            ),
+            "tipo_final": str(procesado[columna].dtype),
+        }
+
+    for columna, unidad_final in (("height", "cm"), ("weight", "kg")):
+        unidades = (
+            original[columna]
+            .dropna()
+            .astype(str)
+            .str.extract(r"([a-zA-Z]+)\s*$", expand=False)
+            .str.lower()
+        )
+        consistencia[columna] = {
+            "unidades_distintas_antes": int(unidades.nunique()),
+            "unidad_final": unidad_final,
+            "tipo_final": str(procesado[columna].dtype),
+        }
+
+    consistencia["amount_spent"] = {
+        "representaciones_distintas_antes": int(
+            original["amount_spent"]
+            .dropna()
+            .map(_firma_formato)
+            .nunique()
+        ),
+        "tipo_final": str(procesado["amount_spent"].dtype),
+    }
+    return consistencia
+
+
+def calcular_metricas_calidad(original, procesado, metricas_duplicados):
+    nulos_antes = _resumen_nulos(original)
+    nulos_despues = _resumen_nulos(procesado)
+    return {
+        "registros_antes": int(len(original)),
+        "registros_despues": int(len(procesado)),
+        "valores_nulos": {
+            "antes": nulos_antes,
+            "despues": nulos_despues,
+        },
+        **metricas_duplicados,
+        "consistencia_formatos": _metricas_consistencia_formatos(
+            original, procesado
+        ),
+    }
+
+
 RUTA_ARCHIVO = (
     Path(__file__).resolve().parent.parent
     / "datos"
     / "ia_project_dirty_dataset_6000.csv"
 )
 
-df = pd.read_csv(RUTA_ARCHIVO)
-df = limpiar_dataframe(df)
+df_original = pd.read_csv(RUTA_ARCHIVO)
+df = limpiar_dataframe(df_original)
 metricas_calidad = {}
 df, metricas_duplicados = eliminar_duplicados(df)
-metricas_calidad.update(metricas_duplicados)
+metricas_calidad = calcular_metricas_calidad(
+    df_original, df, metricas_duplicados
+)
 
-print(f"Total de registros: {len(df)}")
-print(f"Registros en grupos duplicados: {metricas_calidad['registros_en_grupos_duplicados']}")
-print(f"Grupos duplicados identificados: {metricas_calidad['grupos_duplicados']}")
-print(f"Registros duplicados eliminados: {metricas_calidad['duplicados_eliminados']}")
+print(
+    f"Registros: {metricas_calidad['registros_antes']} antes / "
+    f"{metricas_calidad['registros_despues']} después"
+)
+print(
+    f"Nulos: {metricas_calidad['valores_nulos']['antes']['porcentaje']:.2f}% "
+    f"antes / {metricas_calidad['valores_nulos']['despues']['porcentaje']:.2f}% después"
+)
+print(
+    f"Duplicados eliminados: "
+    f"{metricas_calidad['duplicados_eliminados']}"
+)
 print("\nVista preliminar:")
 print(df.head())
 
@@ -292,9 +408,11 @@ reporte_markdown = {
     "fecha_generacion": datetime.now(),
     "secciones": [
         {
-            "titulo": "Deduplicación",
-            "criterio": "Nombre normalizado y fecha de nacimiento",
-            **metricas_duplicados,
+            "titulo": "Métricas de calidad",
+            "criterio_deduplicacion": (
+                "Nombre normalizado y fecha de nacimiento"
+            ),
+            **metricas_calidad,
         }
     ],
 }
