@@ -1,0 +1,23 @@
+artifact_path: file:C:/Users/sergi/OneDrive/Documents/GitHub/design_thinking/mlruns/1/models/m-3e4751ba5eac467c9104653c3707554a/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.13.16
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.2
+    skops_trusted_types: null
+mlflow_version: 3.17.1
+model_id: m-3e4751ba5eac467c9104653c3707554a
+model_size_bytes: 186804
+model_uuid: m-3e4751ba5eac467c9104653c3707554a
+prompts: null
+run_id: bb929119751d49a59d973fe1961d7439
+utc_time_created: '2026-10-19 07:47:50.173524'

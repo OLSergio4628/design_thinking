@@ -224,3 +224,9 @@ __marimo__/
 /datos/creditcard.csv
 /datos/creditcard_clean.csv
 /datos/creditcard_summary.json
+/datos/model_registry.json
+/datos/best_fraud_model.joblib
+/mlflow.db
+/mlflow.db-shm
+/mlflow.db-wal
+/mlartifacts/

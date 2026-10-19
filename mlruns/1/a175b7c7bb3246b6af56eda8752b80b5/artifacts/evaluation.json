@@ -1,0 +1,42 @@
+{
+  "model_name": "random_forest",
+  "best_params": {
+    "max_depth": null
+  },
+  "cross_validation": {
+    "average_precision": {
+      "media": 0.8358818682273939,
+      "desviacion_estandar": 0.020357928850978653
+    },
+    "precision": {
+      "media": 0.9523793483695847,
+      "desviacion_estandar": 0.0174748269710764
+    },
+    "recall": {
+      "media": 0.7410905550146057,
+      "desviacion_estandar": 0.042956387704653515
+    },
+    "f1": {
+      "media": 0.832388115317177,
+      "desviacion_estandar": 0.02168338097881398
+    },
+    "roc_auc": {
+      "media": 0.9465476950633676,
+      "desviacion_estandar": 0.01686877399230224
+    },
+    "balanced_accuracy": {
+      "media": 0.8705123033722119,
+      "desviacion_estandar": 0.021465238760066202
+    }
+  },
+  "test": {
+    "average_precision": 0.8597475968155734,
+    "precision": 0.96,
+    "recall": 0.7346938775510204,
+    "f1": 0.8323699421965318,
+    "roc_auc": 0.9477879731661939,
+    "balanced_accuracy": 0.8673205600473166,
+    "accuracy": 0.9994908886626171
+  },
+  "selected_model": true
+}

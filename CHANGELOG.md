@@ -1,4 +1,7 @@
 # Changelo
+## V2.1.0 2026-10-19
+- Incorporación del reporte técnico de detección de fraude con dataset, preparación, modelos, métricas, MLflow y deuda técnica
+
 ## V1.1.0 2026-10-18
 - Sustitución de la fuente de datos por `mlg-ulb/creditcardfraud` de Kaggle
 - Descarga autenticada desde `config/kaggle.json`, validación y preparación del CSV
@@ -37,3 +40,6 @@
 
 ## V2.0.0 2026-10-18 23:49
 - Actualización a version 2.0.0 caso de uso 2
+
+## V2.1.0 2026-10-18 23:49
+- Integración de mlflow
